@@ -1,4 +1,4 @@
-module github.com/timehub/timehub/services/crm-service
+module github.com/vipos89/timehub/services/crm-service
 
 go 1.24
 

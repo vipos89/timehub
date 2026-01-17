@@ -1,4 +1,4 @@
-module github.com/timehub/timehub/pkg
+module github.com/vipos89/timehub/pkg
 
 go 1.24
 

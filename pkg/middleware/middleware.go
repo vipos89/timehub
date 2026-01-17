@@ -5,8 +5,8 @@ import (
 	"runtime/debug"
 
 	"github.com/labstack/echo/v4"
-	"github.com/timehub/timehub/pkg/erru"
-	"github.com/timehub/timehub/pkg/logger"
+	"github.com/vipos89/timehub/pkg/erru"
+	"github.com/vipos89/timehub/pkg/logger"
 )
 
 func PanicRecovery(next echo.HandlerFunc) echo.HandlerFunc {

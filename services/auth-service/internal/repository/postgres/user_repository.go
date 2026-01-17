@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/timehub/timehub/services/auth-service/internal/domain"
+	"github.com/vipos89/timehub/services/auth-service/internal/domain"
 	"gorm.io/gorm"
 )
 

@@ -8,17 +8,17 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
 
-	"github.com/timehub/timehub/pkg/config"
-	"github.com/timehub/timehub/pkg/db"
-	"github.com/timehub/timehub/pkg/logger"
-	customMiddleware "github.com/timehub/timehub/pkg/middleware"
+	"github.com/vipos89/timehub/pkg/config"
+	"github.com/vipos89/timehub/pkg/db"
+	"github.com/vipos89/timehub/pkg/logger"
+	customMiddleware "github.com/vipos89/timehub/pkg/middleware"
 
-	"github.com/timehub/timehub/services/company-service/internal/delivery/http"
-	"github.com/timehub/timehub/services/company-service/internal/domain"
-	"github.com/timehub/timehub/services/company-service/internal/repository/postgres"
-	"github.com/timehub/timehub/services/company-service/internal/usecase"
+	"github.com/vipos89/timehub/services/company-service/internal/delivery/http"
+	"github.com/vipos89/timehub/services/company-service/internal/domain"
+	"github.com/vipos89/timehub/services/company-service/internal/repository/postgres"
+	"github.com/vipos89/timehub/services/company-service/internal/usecase"
 
-	_ "github.com/timehub/timehub/services/company-service/docs" // for swagger docs
+	_ "github.com/vipos89/timehub/services/company-service/docs" // for swagger docs
 )
 
 // @title Company Service API

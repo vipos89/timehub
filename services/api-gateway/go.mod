@@ -1,4 +1,4 @@
-module github.com/timehub/timehub/services/api-gateway
+module github.com/vipos89/timehub/services/api-gateway
 
 go 1.24
 

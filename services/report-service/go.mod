@@ -1,4 +1,4 @@
-module github.com/timehub/timehub/services/report-service
+module github.com/vipos89/timehub/services/report-service
 
 go 1.24
 

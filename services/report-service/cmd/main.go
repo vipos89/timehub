@@ -7,9 +7,9 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
 
-	"github.com/timehub/timehub/pkg/config"
-	"github.com/timehub/timehub/pkg/logger"
-	_ "github.com/timehub/timehub/services/report-service/docs" // for swagger docs
+	"github.com/vipos89/timehub/pkg/config"
+	"github.com/vipos89/timehub/pkg/logger"
+	_ "github.com/vipos89/timehub/services/report-service/docs" // for swagger docs
 )
 
 // @title Report Service API

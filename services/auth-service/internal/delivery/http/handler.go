@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/timehub/timehub/pkg/erru"
-	"github.com/timehub/timehub/services/auth-service/internal/usecase"
+	"github.com/vipos89/timehub/pkg/erru"
+	"github.com/vipos89/timehub/services/auth-service/internal/usecase"
 )
 
 type AuthHandler struct {

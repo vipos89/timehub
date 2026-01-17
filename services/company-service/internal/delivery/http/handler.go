@@ -5,8 +5,8 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
-	"github.com/timehub/timehub/pkg/erru"
-	"github.com/timehub/timehub/services/company-service/internal/usecase"
+	"github.com/vipos89/timehub/pkg/erru"
+	"github.com/vipos89/timehub/services/company-service/internal/usecase"
 )
 
 type CompanyHandler struct {

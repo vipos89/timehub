@@ -1,4 +1,4 @@
-module github.com/timehub/timehub/services/booking-service
+module github.com/vipos89/timehub/services/booking-service
 
 go 1.24
 

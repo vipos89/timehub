@@ -1,4 +1,4 @@
-module github.com/timehub/timehub/services/auth-service
+module github.com/vipos89/timehub/services/auth-service
 
 go 1.24.0
 
@@ -7,7 +7,7 @@ require (
 	github.com/labstack/echo/v4 v4.15.0
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.6
-	github.com/timehub/timehub/pkg v0.0.0-00010101000000-000000000000
+	github.com/vipos89/timehub/pkg v0.0.0-00010101000000-000000000000
 	golang.org/x/crypto v0.47.0
 	gorm.io/gorm v1.31.1
 )
@@ -47,4 +47,4 @@ require (
 	gorm.io/driver/postgres v1.6.0 // indirect
 )
 
-replace github.com/timehub/timehub/pkg => ../../pkg
+replace github.com/vipos89/timehub/pkg => ../../pkg

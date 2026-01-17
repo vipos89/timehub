@@ -8,15 +8,15 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
 
-	"github.com/timehub/timehub/pkg/config"
-	"github.com/timehub/timehub/pkg/db"
-	"github.com/timehub/timehub/pkg/logger"
-	customMiddleware "github.com/timehub/timehub/pkg/middleware"
-	_ "github.com/timehub/timehub/services/auth-service/docs" // for swagger docs
-	"github.com/timehub/timehub/services/auth-service/internal/delivery/http"
-	"github.com/timehub/timehub/services/auth-service/internal/domain"
-	"github.com/timehub/timehub/services/auth-service/internal/repository/postgres"
-	"github.com/timehub/timehub/services/auth-service/internal/usecase"
+	"github.com/vipos89/timehub/pkg/config"
+	"github.com/vipos89/timehub/pkg/db"
+	"github.com/vipos89/timehub/pkg/logger"
+	customMiddleware "github.com/vipos89/timehub/pkg/middleware"
+	_ "github.com/vipos89/timehub/services/auth-service/docs" // for swagger docs
+	"github.com/vipos89/timehub/services/auth-service/internal/delivery/http"
+	"github.com/vipos89/timehub/services/auth-service/internal/domain"
+	"github.com/vipos89/timehub/services/auth-service/internal/repository/postgres"
+	"github.com/vipos89/timehub/services/auth-service/internal/usecase"
 )
 
 // @title Auth Service API
