@@ -1,0 +1,9 @@
+basePath: /
+host: localhost:8085
+info:
+  contact: {}
+  description: Analytics and Reports.
+  title: Report Service API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

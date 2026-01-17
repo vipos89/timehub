@@ -1,0 +1,9 @@
+basePath: /
+host: localhost:8084
+info:
+  contact: {}
+  description: Manage client base and history.
+  title: CRM Service API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

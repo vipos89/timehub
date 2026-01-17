@@ -1,0 +1,9 @@
+basePath: /
+host: localhost:8081
+info:
+  contact: {}
+  description: Handle registration and login.
+  title: Auth Service API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

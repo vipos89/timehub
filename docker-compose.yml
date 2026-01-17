@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  # Infrastructure
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: timehub # Default DB, others created by init script
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  # Microservices
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      HTTP_PORT: 8080
+      DATABASE_URL: postgres://user:password@postgres:5432/timehub?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      HTTP_PORT: 8081
+      DATABASE_URL: postgres://user:password@postgres:5432/auth_db?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  company-service:
+    build:
+      context: .
+      dockerfile: services/company-service/Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      HTTP_PORT: 8082
+      DATABASE_URL: postgres://user:password@postgres:5432/company_db?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  booking-service:
+    build:
+      context: .
+      dockerfile: services/booking-service/Dockerfile
+    ports:
+      - "8083:8083"
+    environment:
+      HTTP_PORT: 8083
+      DATABASE_URL: postgres://user:password@postgres:5432/booking_db?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  crm-service:
+    build:
+      context: .
+      dockerfile: services/crm-service/Dockerfile
+    ports:
+      - "8084:8084"
+    environment:
+      HTTP_PORT: 8084
+      DATABASE_URL: postgres://user:password@postgres:5432/crm_db?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  report-service:
+    build:
+      context: .
+      dockerfile: services/report-service/Dockerfile
+    ports:
+      - "8085:8085"
+    environment:
+      HTTP_PORT: 8085
+      DATABASE_URL: postgres://user:password@postgres:5432/report_db?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

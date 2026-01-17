@@ -1,0 +1,9 @@
+basePath: /
+host: localhost:8082
+info:
+  contact: {}
+  description: Manage companies, branches, and employees.
+  title: Company Service API
+  version: "1.0"
+paths: {}
+swagger: "2.0"
