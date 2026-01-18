@@ -29,14 +29,7 @@ func main() {
 	cfg := config.Load() // Setup config to load JWT_SECRET
 
 	// Initialize DB (GORM) - connects to auth_db
-	database, err := db.Connect(db.Config{
-		Host:     "localhost",
-		Port:     "5432",
-		User:     "user",
-		Password: "password",
-		DBName:   "auth_db",
-		SSLMode:  "disable",
-	})
+	database, err := db.ConnectDSN(cfg.DBUrl)
 	if err != nil {
 		logger.Error("Failed to connect to database", "error", err)
 		log.Fatalf("Failed to connect to database: %v", err)
@@ -64,7 +57,6 @@ func main() {
 
 	// Middleware
 	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
 	e.Use(customMiddleware.RequestLogger)
 	e.Use(customMiddleware.PanicRecovery)
 

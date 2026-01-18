@@ -1,9 +1,468 @@
 basePath: /
+definitions:
+  delivery_http.addBranchRequest:
+    properties:
+      address:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    required:
+    - name
+    type: object
+  delivery_http.addCategoryRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  delivery_http.addEmployeeRequest:
+    properties:
+      branch_id:
+        type: integer
+      email:
+        description: For Auth Service registration
+        type: string
+      name:
+        type: string
+      position:
+        type: string
+    required:
+    - name
+    type: object
+  delivery_http.addServiceRequest:
+    properties:
+      category_id:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  delivery_http.assignServiceRequest:
+    properties:
+      duration_minutes:
+        type: integer
+      price:
+        type: number
+      service_id:
+        type: integer
+    required:
+    - duration_minutes
+    - price
+    - service_id
+    type: object
+  delivery_http.createCompanyRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  domain.Branch:
+    properties:
+      address:
+        type: string
+      company_id:
+        type: integer
+      created_at:
+        type: string
+      employees:
+        description: Relations
+        items:
+          $ref: '#/definitions/domain.Employee'
+        type: array
+      id:
+        type: integer
+      is_main:
+        type: boolean
+      name:
+        type: string
+      phone:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.Category:
+    properties:
+      company_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.Company:
+    properties:
+      branches:
+        description: Relations
+        items:
+          $ref: '#/definitions/domain.Branch'
+        type: array
+      categories:
+        items:
+          $ref: '#/definitions/domain.Category'
+        type: array
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      owner_id:
+        description: Link to Auth Service User
+        type: integer
+      services:
+        items:
+          $ref: '#/definitions/domain.Service'
+        type: array
+      tax_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.Employee:
+    properties:
+      avatar_url:
+        type: string
+      branch_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      position:
+        type: string
+      services:
+        description: Relations
+        items:
+          $ref: '#/definitions/domain.EmployeeService'
+        type: array
+      updated_at:
+        type: string
+      user_id:
+        description: Optional link to Auth Service
+        type: integer
+    type: object
+  domain.EmployeeService:
+    properties:
+      duration_minutes:
+        type: integer
+      employee_id:
+        type: integer
+      price:
+        type: number
+      service:
+        allOf:
+        - $ref: '#/definitions/domain.Service'
+        description: Relations for Preloading
+      service_id:
+        type: integer
+    type: object
+  domain.Service:
+    properties:
+      category_id:
+        description: Optional
+        type: integer
+      company_id:
+        type: integer
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  erru.AppError:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+    type: object
 host: localhost:8082
 info:
   contact: {}
   description: Manage companies, branches, and employees.
   title: Company Service API
   version: "1.0"
-paths: {}
+paths:
+  /branches/{id}/employees:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Branch ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Employee Input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/delivery_http.addEmployeeRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Employee'
+      summary: Add an employee to a branch
+      tags:
+      - employees
+  /companies:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Company'
+            type: array
+      summary: Get all companies owned by user
+      tags:
+      - companies
+    post:
+      consumes:
+      - application/json
+      description: Creates a new company and a default main branch
+      parameters:
+      - description: Company Input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/delivery_http.createCompanyRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Company'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/erru.AppError'
+      summary: Create a new company
+      tags:
+      - companies
+  /companies/{id}:
+    get:
+      parameters:
+      - description: Company ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Company'
+      summary: Get company details by ID
+      tags:
+      - companies
+  /companies/{id}/branches:
+    get:
+      parameters:
+      - description: Company ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Branch'
+            type: array
+      summary: Get branches of a company
+      tags:
+      - companies
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Company ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Branch Input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/delivery_http.addBranchRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Branch'
+      summary: Add a branch to a company
+      tags:
+      - companies
+  /companies/{id}/categories:
+    get:
+      parameters:
+      - description: Company ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Category'
+            type: array
+      summary: Get categories of a company
+      tags:
+      - companies
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Company ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Category Input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/delivery_http.addCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Category'
+      summary: Add a category
+      tags:
+      - companies
+  /companies/{id}/services:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Company ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Service Input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/delivery_http.addServiceRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Service'
+      summary: Add a service to catalog
+      tags:
+      - companies
+  /employees:
+    get:
+      parameters:
+      - description: Company ID
+        in: query
+        name: company_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Employee'
+            type: array
+      summary: Get employees of a company
+      tags:
+      - employees
+  /employees/{id}/services:
+    get:
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.EmployeeService'
+            type: array
+      summary: Get services performed by employee
+      tags:
+      - employees
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Employee ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Assignment Input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/delivery_http.assignServiceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Assigned
+          schema:
+            type: string
+      summary: Assign service to employee with price
+      tags:
+      - employees
 swagger: "2.0"

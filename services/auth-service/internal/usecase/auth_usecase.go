@@ -38,7 +38,7 @@ func (u *authUsecase) Register(ctx context.Context, email, password, role string
 		return nil, err
 	}
 	if existingUser != nil {
-		return nil, errors.New("user already exists")
+		return nil, domain.ErrUserAlreadyExists
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

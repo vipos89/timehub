@@ -1,9 +1,300 @@
 basePath: /
+definitions:
+  delivery_http.createBookingRequest:
+    properties:
+      client_id:
+        type: integer
+      comment:
+        type: string
+      employee_id:
+        type: integer
+      end_time:
+        type: string
+      service_id:
+        type: integer
+      start_time:
+        type: string
+    required:
+    - client_id
+    - employee_id
+    - end_time
+    - service_id
+    - start_time
+    type: object
+  domain.Appointment:
+    properties:
+      client_id:
+        type: integer
+      comment:
+        type: string
+      created_at:
+        type: string
+      employee_id:
+        type: integer
+      end_time:
+        type: string
+      id:
+        type: integer
+      service_id:
+        type: integer
+      start_time:
+        type: string
+      status:
+        $ref: '#/definitions/domain.AppointmentStatus'
+      updated_at:
+        type: string
+    type: object
+  domain.AppointmentStatus:
+    enum:
+    - pending
+    - confirmed
+    - cancelled
+    type: string
+    x-enum-varnames:
+    - StatusPending
+    - StatusConfirmed
+    - StatusCancelled
+  domain.Schedule:
+    properties:
+      created_at:
+        type: string
+      day_of_week:
+        description: 0 = Sunday, 1 = Monday, ...
+        type: integer
+      employee_id:
+        type: integer
+      end_time:
+        description: e.g. "18:00"
+        type: string
+      id:
+        type: integer
+      is_day_off:
+        type: boolean
+      start_time:
+        description: e.g. "09:00"
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.Slot:
+    properties:
+      end_time:
+        type: string
+      is_free:
+        type: boolean
+      start_time:
+        type: string
+    type: object
+  domain.WorkShift:
+    properties:
+      branch_id:
+        type: integer
+      created_at:
+        type: string
+      date:
+        type: string
+      employee_id:
+        type: integer
+      end_time:
+        description: e.g. "18:00"
+        type: string
+      id:
+        type: integer
+      is_day_off:
+        type: boolean
+      start_time:
+        description: e.g. "09:00"
+        type: string
+      updated_at:
+        type: string
+    type: object
+  erru.AppError:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+    type: object
 host: localhost:8083
 info:
   contact: {}
-  description: Manage appointments and availability.
+  description: Manage schedules and appointments.
   title: Booking Service API
   version: "1.0"
-paths: {}
+paths:
+  /bookings:
+    post:
+      consumes:
+      - application/json
+      description: Create a new appointment if the slot is available
+      parameters:
+      - description: Booking Info
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/delivery_http.createBookingRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Appointment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/erru.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/erru.AppError'
+      summary: Book an appointment
+      tags:
+      - bookings
+  /schedules/{employee_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get weekly working schedule for an employee
+      parameters:
+      - description: Employee ID
+        in: path
+        name: employee_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Schedule'
+            type: array
+      summary: Get employee schedule
+      tags:
+      - schedules
+    post:
+      consumes:
+      - application/json
+      description: Update working hours for an employee
+      parameters:
+      - description: Employee ID
+        in: path
+        name: employee_id
+        required: true
+        type: integer
+      - description: Schedules Array
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/domain.Schedule'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Set employee schedule
+      tags:
+      - schedules
+  /shifts:
+    get:
+      description: Get shifts for an employee or an entire branch for a specific month
+      parameters:
+      - description: Employee ID
+        in: query
+        name: employee_id
+        type: integer
+      - description: Branch ID
+        in: query
+        name: branch_id
+        type: integer
+      - description: Month (ISO8601, e.g., 2026-01-01T00:00:00Z)
+        in: query
+        name: month
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.WorkShift'
+            type: array
+      summary: Get work shifts
+      tags:
+      - shifts
+    post:
+      consumes:
+      - application/json
+      description: Create or update multiple work shifts
+      parameters:
+      - description: Shifts Array
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/domain.WorkShift'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Bulk save work shifts
+      tags:
+      - shifts
+  /slots:
+    get:
+      consumes:
+      - application/json
+      description: Calculate available time slots for an employee and service on a
+        specific date
+      parameters:
+      - description: Employee ID
+        in: query
+        name: employee_id
+        required: true
+        type: integer
+      - description: Service ID
+        in: query
+        name: service_id
+        required: true
+        type: integer
+      - description: Date (ISO8601)
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Slot'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/erru.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/erru.AppError'
+      summary: Get available slots
+      tags:
+      - bookings
 swagger: "2.0"

@@ -29,9 +29,14 @@ clean:
 swag-gen:
 	@echo "Generating Swagger docs..."
 	@for service in $(SERVICES); do \
-		if [ -d "./services/$$service/cmd" ]; then \
-			echo "Generating docs for $$service..."; \
-			cd services/$$service/cmd && go run github.com/swaggo/swag/cmd/swag init -g main.go -o ../docs --parseDependency --parseInternal; \
+		echo "Generating docs for $$service..."; \
+		if [ -d "services/$$service/cmd" ]; then \
+			cd services/$$service/cmd; \
+			SEARCH_DIRS="."; \
+			if [ -d "../internal" ]; then \
+				SEARCH_DIRS=".,../internal"; \
+			fi; \
+			go run github.com/swaggo/swag/cmd/swag init -g main.go -d $$SEARCH_DIRS -o ../docs --parseDependency --parseInternal; \
 			cd ../../../; \
 		fi \
 	done

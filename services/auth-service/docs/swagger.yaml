@@ -1,9 +1,132 @@
 basePath: /
+definitions:
+  delivery_http.loginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  delivery_http.loginResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  delivery_http.registerRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      role:
+        description: owner, admin, master
+        type: string
+    required:
+    - email
+    - password
+    - role
+    type: object
+  domain.Role:
+    enum:
+    - owner
+    - admin
+    - master
+    type: string
+    x-enum-varnames:
+    - RoleOwner
+    - RoleAdmin
+    - RoleMaster
+  domain.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      role:
+        allOf:
+        - $ref: '#/definitions/domain.Role'
+        description: '''owner'', ''admin'', ''master'''
+      updated_at:
+        type: string
+    type: object
+  erru.AppError:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+    type: object
 host: localhost:8081
 info:
   contact: {}
   description: Handle registration and login.
   title: Auth Service API
   version: "1.0"
-paths: {}
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login with email and password to get JWT token
+      parameters:
+      - description: Login Input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/delivery_http.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/delivery_http.loginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/erru.AppError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/erru.AppError'
+      summary: Login user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user (company owner or employee)
+      parameters:
+      - description: Register Input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/delivery_http.registerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/erru.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/erru.AppError'
+      summary: Register a new user
+      tags:
+      - auth
 swagger: "2.0"

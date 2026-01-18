@@ -31,14 +31,7 @@ func main() {
 	cfg := config.Load()
 
 	// Initialize DB (GORM)
-	database, err := db.Connect(db.Config{
-		Host:     "localhost",
-		Port:     "5432",
-		User:     "user",
-		Password: "password",
-		DBName:   "company_db",
-		SSLMode:  "disable",
-	})
+	database, err := db.ConnectDSN(cfg.DBUrl)
 	if err != nil {
 		logger.Error("Failed to connect to database", "error", err)
 		log.Fatalf("Failed to connect to database: %v", err)
@@ -66,13 +59,12 @@ func main() {
 	// Init Layers
 	companyRepo := postgres.NewCompanyRepository(database)
 	timeout := time.Duration(2) * time.Second
-	companyUsecase := usecase.NewCompanyUsecase(companyRepo, timeout)
+	companyUsecase := usecase.NewCompanyUsecase(companyRepo, timeout, cfg.AuthServiceURL)
 
 	e := echo.New()
 
 	// Middleware
 	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
 	e.Use(customMiddleware.RequestLogger)
 	e.Use(customMiddleware.PanicRecovery)
 

@@ -24,5 +24,6 @@ var (
 	ErrUnauthorized        = New(http.StatusUnauthorized, "Unauthorized")
 	ErrForbidden           = New(http.StatusForbidden, "Forbidden")
 	ErrNotFound            = New(http.StatusNotFound, "Not Found")
+	ErrConflict            = New(http.StatusConflict, "Conflict")
 	ErrInternalServerError = New(http.StatusInternalServerError, "Internal Server Error")
 )

@@ -1,10 +1,12 @@
 package http
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/vipos89/timehub/pkg/erru"
+	"github.com/vipos89/timehub/services/auth-service/internal/domain"
 	"github.com/vipos89/timehub/services/auth-service/internal/usecase"
 )
 
@@ -46,6 +48,9 @@ func (h *AuthHandler) Register(c echo.Context) error {
 
 	user, err := h.AuthUsecase.Register(c.Request().Context(), req.Email, req.Password, req.Role)
 	if err != nil {
+		if errors.Is(err, domain.ErrUserAlreadyExists) {
+			return c.JSON(http.StatusConflict, erru.New(http.StatusConflict, err.Error()))
+		}
 		return c.JSON(http.StatusInternalServerError, erru.New(http.StatusInternalServerError, err.Error()))
 	}
 

@@ -13,6 +13,7 @@ FROM alpine:latest
 WORKDIR /root/
 
 COPY --from=builder /server .
+COPY services/api-gateway/docs ./docs
 
 EXPOSE 8080
 

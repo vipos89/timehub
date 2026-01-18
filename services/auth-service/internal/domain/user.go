@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"errors"
 	"time"
 )
 
@@ -11,6 +12,10 @@ const (
 	RoleOwner  Role = "owner"
 	RoleAdmin  Role = "admin"
 	RoleMaster Role = "master"
+)
+
+var (
+	ErrUserAlreadyExists = errors.New("user already exists")
 )
 
 type User struct {

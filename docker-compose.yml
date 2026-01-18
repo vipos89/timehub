@@ -43,6 +43,11 @@ services:
     environment:
       HTTP_PORT: 8080
       DATABASE_URL: postgres://user:password@postgres:5432/timehub?sslmode=disable
+      AUTH_SERVICE_URL: http://auth-service:8081
+      COMPANY_SERVICE_URL: http://company-service:8082
+      BOOKING_SERVICE_URL: http://booking-service:8083
+      CRM_SERVICE_URL: http://crm-service:8084
+      REPORT_SERVICE_URL: http://report-service:8085
     depends_on:
       postgres:
         condition: service_healthy
